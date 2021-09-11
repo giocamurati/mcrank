@@ -1,0 +1,99 @@
+diff --git a/ASCAD_test_models.py b/ASCAD_test_models.py
+index 47936ed..3049055 100644
+--- a/ASCAD_test_models.py
++++ b/ASCAD_test_models.py
+@@ -146,10 +146,12 @@ def full_ranks(predictions, dataset, metadata, min_trace_idx, max_trace_idx, ran
+ 	index = np.arange(min_trace_idx+rank_step, max_trace_idx, rank_step)
+ 	f_ranks = np.zeros((len(index), 2), dtype=np.uint32)
+ 	key_bytes_proba = []
++	lp_i = []
+ 	for t, i in zip(index, range(0, len(index))):
+ 		real_key_rank, key_bytes_proba = rank(predictions[t-rank_step:t], metadata, real_key, t-rank_step, t, key_bytes_proba, target_byte, simulated_key)
+ 		f_ranks[i] = [t - min_trace_idx, real_key_rank]
+-	return f_ranks
++		lp_i.append(np.array(key_bytes_proba))
++	return f_ranks, lp_i
+ 
+ #### ASCAD helper to load profiling and attack data (traces and labels)
+ # Loads the profiling and attack datasets from the ASCAD
+@@ -163,9 +165,9 @@ def load_ascad(ascad_database_file, load_metadata=False):
+ 		print("Error: can't open HDF5 file '%s' for reading (it might be malformed) ..." % ascad_database_file)
+ 		sys.exit(-1)
+ 	# Load profiling traces
+-	X_profiling = np.array(in_file['Profiling_traces/traces'], dtype=np.int8)
++	X_profiling = 0 #np.array(in_file['Profiling_traces/traces'], dtype=np.int8)
+ 	# Load profiling labels
+-	Y_profiling = np.array(in_file['Profiling_traces/labels'])
++	Y_profiling = 0 #np.array(in_file['Profiling_traces/labels'])
+ 	# Load attacking traces
+ 	X_attack = np.array(in_file['Attack_traces/traces'], dtype=np.int8)
+ 	# Load attacking labels
+@@ -286,11 +288,15 @@ def check_model(model_file, ascad_database, num_traces=2000, target_byte=2, mult
+ 	if (multilabel!=0):
+ 		if (multilabel==1):
+ 			predictions_sbox = multilabel_predict(predictions)
++			# np.save("predictions_sbox_multilabel.npy", predictions_sbox)
+ 		else:
+ 			predictions_sbox = multilabel_without_permind_predict(predictions)
++			# np.save("predictions_sbox_multilabel_without_permind.npy", predictions_sbox)
++		lps = []
+ 		for target_byte in range(16):
+-			ranks_i = full_ranks(predictions_sbox[target_byte], X_attack, Metadata_attack, 0, num_traces, 10, target_byte,	simulated_key)
+-			# We plot the results
++			ranks_i, lp_i = full_ranks(predictions_sbox[target_byte], X_attack, Metadata_attack, 0, num_traces, 1, target_byte,	simulated_key)
++			lps.append(lp_i)
++ 			# We plot the results
+ 			x_i = [ranks_i[i][0] for i in range(0, ranks_i.shape[0])]
+ 			y_i = [ranks_i[i][1] for i in range(0, ranks_i.shape[0])]
+ 			plt.plot(x_i, y_i, label="key_"+str(target_byte))
+@@ -303,6 +309,14 @@ def check_model(model_file, ascad_database, num_traces=2000, target_byte=2, mult
+ 			plt.savefig(save_file)
+ 		else:
+ 			plt.show(block=False)
++		if (multilabel==1):
++			predictions_sbox = multilabel_predict(predictions)
++			np.save("lp_multilabel.npy", lps)
++			np.save("key_multilabel.npy",  Metadata_attack[0]['key'] if simulated_key != 1 else np.zeros(16))
++		else:
++			predictions_sbox = multilabel_without_permind_predict(predictions)
++			np.save("lp_multilabel_without_permind.npy", lps)
++			np.save("key_multilabel_without_permind.npy", Metadata_attack[0]['key'] if simulated_key != 1 else np.zeros(16))
+ 
+ 	else:
+ 		predictions_sbox_i = predictions
+@@ -365,8 +379,8 @@ if __name__ == "__main__":
+ 	check_model(model_file, ascad_database, num_traces, target_byte, multilabel, simulated_key, save_file)
+ 
+ 
+-	try:
+-		input("Press enter to exit ...")
+-	except SyntaxError:
+-		pass
++	# try:
++		# input("Press enter to exit ...")
++	# except SyntaxError:
++		# pass
+ 
+diff --git a/STM32_AES_v2/example_test_models_params b/STM32_AES_v2/example_test_models_params
+index d50a161..d5342b9 100644
+--- a/STM32_AES_v2/example_test_models_params
++++ b/STM32_AES_v2/example_test_models_params
+@@ -4,5 +4,6 @@
+ #"save_file": "fig-multiresnet-earlystopping.png",
+ "model_file": "STM32_AES_v2/ASCAD_data/ASCAD_trained_models/ascadv2-multi-resnet-earlystopping.h5",
+ "ascad_database": "STM32_AES_v2/ASCAD_data/ASCAD_databases/ascadv2-extracted.h5",
+-"num_traces": 250
++"num_traces": 500,
++"save_file" : "fig"
+ }
+diff --git a/STM32_AES_v2/example_test_models_without_permind_params b/STM32_AES_v2/example_test_models_without_permind_params
+index 8d4c967..75d4373 100644
+--- a/STM32_AES_v2/example_test_models_without_permind_params
++++ b/STM32_AES_v2/example_test_models_without_permind_params
+@@ -4,5 +4,5 @@
+ #"save_file": "fig-multiresnet-wo-permind-earlystopping.png",
+ "model_file": "STM32_AES_v2/ASCAD_data/ASCAD_trained_models/ascadv2-multi-resnet-wo-permind-earlystopping.h5",
+ "ascad_database": "STM32_AES_v2/ASCAD_data/ASCAD_databases/ascadv2-extracted.h5",
+-"num_traces": 250
++"num_traces": 500
+ }

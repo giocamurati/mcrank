@@ -1,0 +1,42 @@
+diff --git a/compute_gm_bounds.m b/compute_gm_bounds.m
+index ea84ed0..c54cc98 100644
+--- a/compute_gm_bounds.m
++++ b/compute_gm_bounds.m
+@@ -1,4 +1,4 @@
+-function [gmlb, gmub, s_gmlb, s_gmub] = compute_gm_bounds(pmat, dosym, sdigits)
++function output = compute_gm_bounds(pmat, dosym, sdigits)
+ %COMPUTE_GM_BOUNDS Computes fast bounds for Massey's Guessing Entropy
+ %   [gmlb, gmub, s_gmlb, s_gmub] = COMPUTE_GM_BOUNDS(pmat)
+ %   computes the fast bounds for Massey's Guessing Entropy.
+@@ -26,6 +26,10 @@ function [gmlb, gmub, s_gmlb, s_gmub] = compute_gm_bounds(pmat, dosym, sdigits)
+ %   s_gmlb and s_gmub are the symbolical values of the bounds, only given
+ %   when dosym!=0.
+ 
++warning('off', 'all');
++pkg load symbolic
++tic
++
+ nvalues = size(pmat, 1);
+ nlists = size(pmat, 2);
+ if nargin < 2
+@@ -45,6 +49,8 @@ if dosym == 0
+     gmub = 0.5*p + 0.5;
+     s_gmlb = 0;
+     s_gmub = 0;
++    time = toc;
++    output = [log2(gmlb), log2(gmub), s_gmlb, s_gmub, time];
+ else
+     s_nvalues = sym(nvalues);
+     s_nlists = sym(nlists);
+@@ -62,7 +68,9 @@ else
+     s_gmub = s2*sp + s2;
+     gmlb = vpa(s_gmlb);
+     gmub = vpa(s_gmub);
+-end
+-
+ 
++    time = toc;
++    %output = [gmlb, gmub, s_gmlb, s_gmub, time];
++    output = [double(log2(gmlb)), double(log2(gmub)), 0, 0, time];
++end
+ 
