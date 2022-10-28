@@ -27,7 +27,7 @@ source ~/.bashrc
 cd ~
 git clone https://github.com/giocamurati/mcrank
 cd mcrank
-git checkout 2e3b09c13e3fb737ea82fd765f82fe027b5e71d8
+git checkout 0aba3e7810eb33440941379638c7bdbf8378451c
 
 # Create mcrank python environment
 export PATH="~/miniconda3/bin:$PATH"
