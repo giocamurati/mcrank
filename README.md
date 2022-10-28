@@ -27,6 +27,7 @@ Useful commands:
 * ```vagrant halt``` # Halt the VM
 * ```vagrant destroy``` # Destroy the VM
 * ```VboxManage export mcrank -o mcrank.ova``` # Export .ova
+* ```VboxManage import mcrank.ova``` # Import .ova
 
 The login is:
 * user ```vagrant```
