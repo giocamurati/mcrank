@@ -7,6 +7,9 @@
 # Copyright (C) 2022 UC Louvain
 # Copyright (C) 2022 François-Xavier Standaert
 
+# Clone ASCAD and apply a small patch (to get the desired output)
+# Download trained models
+# Run the tests
 git clone https://github.com/ANSSI-FR/ASCAD
 
 pushd .

@@ -10,6 +10,7 @@
 set -e # Exit on first error.
 set -x # Print commands
 
+# Install dependencies
 sudo apt-get update
 sudo apt-get install -y vim git tig bzip2 build-essential texlive dvipng \
 	texlive-latex-extra texlive-fonts-extra cm-super rubber zathura \
@@ -25,9 +26,11 @@ source ~/.bashrc
 
 # Get MCRank
 cd ~
+if [ ! -d "mcrank" ] ; then
 git clone https://github.com/giocamurati/mcrank
+fi
 cd mcrank
-git checkout 0aba3e7810eb33440941379638c7bdbf8378451c
+#git checkout 0aba3e7810eb33440941379638c7bdbf8378451c
 
 # Create mcrank python environment
 export PATH="~/miniconda3/bin:$PATH"

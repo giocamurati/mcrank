@@ -7,6 +7,7 @@
 # Copyright (C) 2022 UC Louvain
 # Copyright (C) 2022 François-Xavier Standaert
 
+# Install gmbounds
 git clone https://gitlab.cs.pub.ro/marios.choudary/gmbounds.git
 pushd .
 cd gmbounds/
@@ -14,9 +15,11 @@ git checkout 05da0a56a262f78c46ffd3ddb7e245e423200520
 git apply ../gmbounds.patch
 popd
 
+# Install dependencies for HEL and gro18
 sudo apt-get install -y libntl-dev
 sudo apt-get install -y libgmp-dev
 
+# Install library and python wrapper python_hel
 git clone https://github.com/giocamurati/python_hel.git
 pushd .
 cd python_hel/
@@ -33,6 +36,7 @@ python3 setup.py install
 python3 python_hel/hel.py
 popd
 
+# Install library and python wrapper for gro18
 git clone https://github.com/giocamurati/python_gro18.git
 pushd .
 cd python_gro18

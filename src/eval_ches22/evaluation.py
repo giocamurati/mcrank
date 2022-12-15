@@ -11,10 +11,10 @@ __license__ = "GNU GPL v3"
 __version__ = "1.0"
 
 import sys
-sys.path.append('../mcrank')
-sys.path.append('../tests')
-sys.path.append('../utils')
-sys.path.append('../sota')
+sys.path.append('../mcrank') # MCRank
+sys.path.append('../tests') # Tests for toy, AES-128/256, RSA, ASCAD
+sys.path.append('../utils') # Simulation of traces and attacks
+sys.path.append('../sota') # State-of-the-art key rank estimation  tools
 
 if not sys.warnoptions:
     import warnings
