@@ -30,7 +30,7 @@ if [ ! -d "mcrank" ] ; then
 git clone https://github.com/giocamurati/mcrank
 fi
 cd mcrank
-#git checkout 0aba3e7810eb33440941379638c7bdbf8378451c
+git checkout 764d3edccf1f3ae635402af3860954961305c49f
 
 # Create mcrank python environment
 export PATH="~/miniconda3/bin:$PATH"
